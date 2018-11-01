@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <AssemblyName>tomware.Microcron.Core</AssemblyName>
+    <RootNamespace>tomware.Microcron.Core</RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>A simple crontab library that calculates dates based on a cron expression.</Description>
+    <RepositoryUrl>https://github.com/thomasduft/microcron</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/thomasduft/microcron/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Authors>Thomas Duft</Authors>
+    <Company>tomWare SOLUTIONS</Company>
+    <PackageProjectUrl>https://github.com/thomasduft/microcron</PackageProjectUrl>
+    <PackageTags>Cron Crontab micro</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>2018 tomWare SOLUTIONS</Copyright>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
+
+</Project>
