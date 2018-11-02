@@ -7,22 +7,20 @@ namespace tomware.Microcron.Core
   /// <summary>
   /// Simple cron expression parser.
   /// </summary>
+  /// <code>
+  /// Supportd format:
+  ///  * * * * * command to execute
+  ///  │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
+  ///  │ │ │ └──── month (1 - 12 or JAN-DEC)
+  ///  │ │ └────── day of month (1 - 31)
+  ///  │ └──────── hour (0 - 23)
+  ///  └────────── min (0 - 59)
+  /// </code>
   public class Cron
   {
     private List<CronFieldBase> _fields;
 
     public string Expression { get; private set; }
-
-    /*
-		# * * * * *  command to execute
-		# │ │ │ │ │
-		# │ │ │ │ │
-		# │ │ │ │ └── day of week	(0 - 6 or SUN-SAT)
-		# │ │ │ └──── month			(1 - 12 or JAN-DEC)
-		# │ │ └────── day of month	(1 - 31)
-		# │ └──────── hour			(0 - 23)
-		# └────────── min			(0 - 59)
-		*/
 
     /// <summary>
     /// Creates a empty Cron object with the default expression <* * * * *>.
@@ -31,8 +29,7 @@ namespace tomware.Microcron.Core
     {
       Expression = Expressions.DEFAULT_EXPRESSION;
 
-      _fields = new List<CronFieldBase>(5);
-      ParseExpression();
+      this.init();
     }
 
     /// <summary>
@@ -43,18 +40,7 @@ namespace tomware.Microcron.Core
     {
       Expression = expression;
 
-      _fields = new List<CronFieldBase>(5);
-      ParseExpression();
-    }
-
-    /// <summary>
-    /// Returns the datetime of the next occurence based on the cron expression with DateTime.Now 
-    /// as reference.
-    /// </summary>
-    /// <returns></returns>
-    public DateTime GetNextOccurrence()
-    {
-      return GetNextOccurrence(null);
+      this.init();
     }
 
     /// <summary>
@@ -62,11 +48,9 @@ namespace tomware.Microcron.Core
     /// </summary>
     /// <param name="reference"></param>
     /// <returns></returns>
-    public DateTime GetNextOccurrence(DateTime? reference)
+    public DateTime GetNextOccurrence(DateTime reference)
     {
-      if (!reference.HasValue) reference = DateTime.Now;
-
-      var now = reference.Value;
+      var now = reference;
       if (now.Second > 0) now = now.AddSeconds(-now.Second);
 
       while (now < DateTime.MaxValue)
@@ -77,6 +61,12 @@ namespace tomware.Microcron.Core
       }
 
       throw new Exception("DateTime.MaxValue reached!");
+    }
+
+    private void init()
+    {
+      _fields = new List<CronFieldBase>(5);
+      ParseExpression();
     }
 
     private void ParseExpression()
