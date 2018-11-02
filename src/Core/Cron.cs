@@ -8,7 +8,7 @@ namespace tomware.Microcron.Core
   /// Simple cron expression parser.
   /// </summary>
   /// <code>
-  /// Supportd format:
+  /// Supported format:
   ///  * * * * * command to execute
   ///  │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
   ///  │ │ │ └──── month (1 - 12 or JAN-DEC)
