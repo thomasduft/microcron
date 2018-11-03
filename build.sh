@@ -12,6 +12,6 @@ echo Restore solution
 dotnet restore microcron.sln
 
 echo Packaging solution
-dotnet pack src/Core/ -c Release /p:PackageVersion=$1 -o ./../../dist/nupkgs
+dotnet pack src/Core/ -c Release /p:PackageVersion=$1 /p:Version=$1 -o ./../../dist/nupkgs
 
 echo Done
