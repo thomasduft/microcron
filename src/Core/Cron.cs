@@ -5,7 +5,7 @@ using System.Linq;
 namespace tomware.Microcron.Core
 {
   /// <summary>
-  /// Simple cron expression parser.
+  /// A simple cron expression parser.
   /// </summary>
   /// <code>
   /// Supported format:

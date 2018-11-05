@@ -5,7 +5,7 @@
     <AssemblyName>tomware.Microcron.Core</AssemblyName>
     <RootNamespace>tomware.Microcron.Core</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Description>A simple crontab library that calculates dates based on a cron expression.</Description>
+    <Description>A simple cron expression parser that calculates dates based on a cron expression.</Description>
     <RepositoryUrl>https://github.com/thomasduft/microcron</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/thomasduft/microcron/blob/master/LICENSE.md</PackageLicenseUrl>
     <Authors>Thomas Duft</Authors>
