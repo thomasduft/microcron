@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>A simple cron expression parser that calculates dates based on a cron expression.</Description>
     <RepositoryUrl>https://github.com/thomasduft/microcron</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/thomasduft/microcron/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Authors>Thomas Duft</Authors>
     <Company>tomWare SOLUTIONS</Company>
     <PackageProjectUrl>https://github.com/thomasduft/microcron</PackageProjectUrl>
@@ -18,4 +18,7 @@
     <FileVersion>$(Version)</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>
