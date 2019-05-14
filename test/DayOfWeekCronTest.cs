@@ -11,9 +11,7 @@ namespace tomware.Microcron.Tests
     public void Every_Monday()
     {
       // Arrange
-      string expr = "0 0 * * 1";
-
-      var cron = new Cron(expr);
+      var cron = new Cron("0 0 * * 1");
 
       // ActAssert
       Helper.ActAssert(cron,
@@ -29,9 +27,7 @@ namespace tomware.Microcron.Tests
     public void Every_WorkDay()
     {
       // Arrange
-      string expr = "0 0 * * 1,2,3,4,5";
-
-      var cron = new Cron(expr);
+      var cron = new Cron( "0 0 * * 1,2,3,4,5");
 
       // ActAssert
       Helper.ActAssert(cron,

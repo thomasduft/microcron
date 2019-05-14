@@ -11,9 +11,7 @@ namespace tomware.Microcron.Tests
     public void Every_Month()
     {
       // Arrange
-      string expr = "0 0 1 * *";
-
-      var cron = new Cron(expr);
+      var cron = new Cron("0 0 1 * *");
 
       // ActAssert
       for (int i = 1; i <= 12; i++)
@@ -41,9 +39,7 @@ namespace tomware.Microcron.Tests
     public void Only_In_April()
     {
       // Arrange
-      string expr = "0 0 * APR *";
-
-      var cron = new Cron(expr);
+      var cron = new Cron("0 0 * APR *");
 
       // ActAssert
       Helper.ActAssert(cron,

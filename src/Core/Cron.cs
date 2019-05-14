@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,16 +9,18 @@ namespace tomware.Microcron.Core
   /// </summary>
   /// <code>
   /// Supported format:
-  ///  * * * * * command to execute
-  ///  │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
-  ///  │ │ │ └──── month (1 - 12 or JAN-DEC)
-  ///  │ │ └────── day of month (1 - 31)
-  ///  │ └──────── hour (0 - 23)
-  ///  └────────── min (0 - 59)
+  ///  * * * * * * command to execute
+  ///  | │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
+  ///  | │ │ │ └──── month (1 - 12 or JAN-DEC)
+  ///  | │ │ └────── day of month (1 - 31)
+  ///  | │ └──────── hour (0 - 23)
+  ///  | └────────── min (0 - 59)
+  ///  └──────────── sec (0 - 59)
   /// </code>
   public class Cron
   {
-    private List<CronFieldBase> _fields;
+    private List<CronFieldBase> fields;
+    private bool hasSeconds = false;
 
     public string Expression { get; private set; }
 
@@ -27,9 +29,9 @@ namespace tomware.Microcron.Core
     /// </summary>
     public Cron()
     {
-      Expression = Expressions.DEFAULT_EXPRESSION;
+      this.Expression = Expressions.DEFAULT_EXPRESSION;
 
-      this.init();
+      this.Init();
     }
 
     /// <summary>
@@ -38,9 +40,9 @@ namespace tomware.Microcron.Core
     /// <param name="expression"></param>
     public Cron(string expression)
     {
-      Expression = expression;
+      this.Expression = expression;
 
-      this.init();
+      this.Init();
     }
 
     /// <summary>
@@ -51,75 +53,104 @@ namespace tomware.Microcron.Core
     public DateTime GetNextOccurrence(DateTime reference)
     {
       var now = reference;
-      if (now.Second > 0) now = now.AddSeconds(-now.Second);
+      if (!this.hasSeconds && now.Second > 0)
+      {
+        now = now.AddSeconds(-now.Second);
+      }
 
       while (now < DateTime.MaxValue)
       {
-        now = now.AddMinutes(1);
+        now = this.hasSeconds
+          ? now.AddSeconds(1)
+          : now.AddMinutes(1);
 
-        if (Match(now)) return now;
+        if (this.Match(now)) return now;
       }
 
       throw new Exception("DateTime.MaxValue reached!");
     }
 
-    private void init()
+    private void Init()
     {
-      _fields = new List<CronFieldBase>(5);
-      ParseExpression();
+      this.hasSeconds = this.Expression.Split(' ').Length == 6;
+      this.fields = new List<CronFieldBase>(5);
+      this.ParseExpression();
     }
 
     private void ParseExpression()
     {
-      var elements = Expression.Split(' ');
-      if (elements.Length != 5)
-        throw new Exception("Expression is not a valid 5 token based cron expression!");
+      var tokens = this.Expression.Split(' ');
+      if (tokens.Length < 5 || tokens.Length > 6)
+        throw new Exception("Expression is not a valid 5 or 6 token based cron expression!");
 
-      _fields.Add(new MinutesCronField
+      var tokenIndex = 0;
+      if (this.hasSeconds)
+      {
+        this.fields.Add(new SecondsCronField
+        {
+          CronFieldType = CronFieldType.Seconds,
+          ExpressionValue = tokens[tokenIndex]
+        });
+        tokenIndex++;
+      }
+
+      this.fields.Add(new MinutesCronField
       {
         CronFieldType = CronFieldType.Minutes,
-        ExpressionValue = elements[0]
+        ExpressionValue = tokens[tokenIndex]
       });
-      _fields.Add(new HoursCronField
+      tokenIndex++;
+
+      this.fields.Add(new HoursCronField
       {
         CronFieldType = CronFieldType.Hours,
-        ExpressionValue = elements[1]
+        ExpressionValue = tokens[tokenIndex]
       });
-      _fields.Add(new DayOfMonthCronField
+      tokenIndex++;
+
+      this.fields.Add(new DayOfMonthCronField
       {
         CronFieldType = CronFieldType.DayOfMonth,
-        ExpressionValue = elements[2]
+        ExpressionValue = tokens[tokenIndex]
       });
-      _fields.Add(new MonthCronField
+      tokenIndex++;
+
+      this.fields.Add(new MonthCronField
       {
         CronFieldType = CronFieldType.Month,
-        ExpressionValue = elements[3]
+        ExpressionValue = tokens[tokenIndex]
       });
-      _fields.Add(new DayOfWeekCronField
+      tokenIndex++;
+
+      this.fields.Add(new DayOfWeekCronField
       {
         CronFieldType = CronFieldType.DayOfWeek,
-        ExpressionValue = elements[4]
+        ExpressionValue = tokens[tokenIndex]
       });
 
-      foreach (var item in _fields)
+      foreach (var item in this.fields)
       {
         item.Parse();
       }
     }
 
-    private CronFieldBase GetField(CronFieldType type)
-    {
-      return _fields.First(f => f.CronFieldType == type);
-    }
-
     private bool Match(DateTime now)
     {
-      bool match = GetField(CronFieldType.Minutes).Contains(now.Minute);
-      match &= GetField(CronFieldType.Hours).Contains(now.Hour);
-      match &= GetField(CronFieldType.DayOfMonth).Contains(now.Day);
-      match &= GetField(CronFieldType.Month).Contains(now.Month);
-      match &= GetField(CronFieldType.DayOfWeek).Contains((int)now.DayOfWeek);
+      bool match = true;
+      if (this.hasSeconds) match = this.GetField(CronFieldType.Seconds).Contains(now.Second);
+
+      match &= this.GetField(CronFieldType.Minutes).Contains(now.Minute);
+      match &= this.GetField(CronFieldType.Hours).Contains(now.Hour);
+      match &= this.GetField(CronFieldType.DayOfMonth).Contains(now.Day);
+      match &= this.GetField(CronFieldType.Month).Contains(now.Month);
+      match &= this.GetField(CronFieldType.DayOfWeek).Contains((int)now.DayOfWeek);
+
       return match;
+    }
+
+    private CronFieldBase GetField(CronFieldType type)
+    {
+      return this.fields.First(f => f.CronFieldType == type);
     }
   }
 
@@ -131,6 +162,7 @@ namespace tomware.Microcron.Core
 
   internal enum CronFieldType
   {
+    Seconds,
     Minutes,
     Hours,
     DayOfMonth,
@@ -148,6 +180,35 @@ namespace tomware.Microcron.Core
     internal bool Contains(int timePart)
     {
       return this.FieldValues.Contains(timePart);
+    }
+  }
+
+  internal class SecondsCronField : CronFieldBase
+  {
+    internal override void Parse()
+    {
+      // min (0 - 59)
+      var seconds = this.ExpressionValue.Split(',');
+      List<int> givenSeconds = new List<int>();
+      foreach (var second in seconds)
+      {
+        if (second == Expressions.DEFAULT_EXPRESSION_FIELD)
+        {
+          for (int i = 0; i <= 59; i++)
+          {
+            givenSeconds.Add(i);
+          }
+        }
+        else
+        {
+          int m;
+          if (!int.TryParse(second, out m)) continue;
+
+          givenSeconds.Add(m);
+        }
+      }
+
+      this.FieldValues = givenSeconds.ToArray();
     }
   }
 
@@ -301,6 +362,7 @@ namespace tomware.Microcron.Core
         month,
         monthText
       );
+
       throw new NotSupportedException(message);
     }
   }
