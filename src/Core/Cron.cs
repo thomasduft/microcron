@@ -10,11 +10,11 @@ namespace tomware.Microcron.Core
   /// <code>
   /// Supported format:
   ///  * * * * * * command to execute
-  ///  | │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
-  ///  | │ │ │ └──── month (1 - 12 or JAN-DEC)
-  ///  | │ │ └────── day of month (1 - 31)
-  ///  | │ └──────── hour (0 - 23)
-  ///  | └────────── min (0 - 59)
+  ///  │ │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
+  ///  │ │ │ │ └──── month (1 - 12 or JAN-DEC)
+  ///  │ │ │ └────── day of month (1 - 31)
+  ///  │ │ └──────── hour (0 - 23)
+  ///  │ └────────── min (0 - 59)
   ///  └──────────── sec (0 - 59)
   /// </code>
   public class Cron
@@ -38,6 +38,16 @@ namespace tomware.Microcron.Core
     /// Creates a Cron object with the desired expression.
     /// </summary>
     /// <param name="expression"></param>
+    /// <code>
+    /// Supported format:
+    ///  * * * * * * command to execute
+    ///  │ │ │ │ │ └── day of week (0 - 6 or SUN-SAT)
+    ///  │ │ │ │ └──── month (1 - 12 or JAN-DEC)
+    ///  │ │ │ └────── day of month (1 - 31)
+    ///  │ │ └──────── hour (0 - 23)
+    ///  │ └────────── min (0 - 59)
+    ///  └──────────── sec (0 - 59)
+    /// </code>
     public Cron(string expression)
     {
       this.Expression = expression;
